@@ -85,7 +85,7 @@ public class SyncHelloHandler extends BaseHandler
         // write subpacket
         buffer.put((byte) 0x00); // pkt type
         buffer.put((byte) 0x06); // pkt size
-        buffer.put(client.getClientId());
+        buffer.put((byte) 0x00);
         buffer.putInt(client.getSessionId());
         buffer.put(createSyncSlots(client.getTotalPlayers()));
         buffer.put((byte) 0xff); // packet end
