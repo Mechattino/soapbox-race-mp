@@ -128,8 +128,10 @@ public class MpClient
     public long getTimeDiff()
     {
         long now = new Date().getTime();
-        MpSession mpSession = MpSessions.get(this);
-        return mpSession.getCliTimeStart() + (now - startedTime);
+        
+        return now - startedTime;
+//        MpSession mpSession = MpSessions.get(this);
+//        return mpSession.getCliTimeStart() + (now - startedTime);
     }
 
     public byte getClientId()
@@ -149,7 +151,7 @@ public class MpClient
 
     public byte[] getSequenceB()
     {
-        return ByteBuffer.allocate(2).putShort((short) sequenceA++).array();
+        return ByteBuffer.allocate(2).putShort((short) sequenceB++).array();
     }
 
     public long getHelloTime()
