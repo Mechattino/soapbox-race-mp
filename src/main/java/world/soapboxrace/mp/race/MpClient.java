@@ -129,9 +129,8 @@ public class MpClient
     {
         long now = new Date().getTime();
         
-        return now - startedTime;
-//        MpSession mpSession = MpSessions.get(this);
-//        return mpSession.getCliTimeStart() + (now - startedTime);
+        MpSession mpSession = MpSessions.get(this);
+        return mpSession.getCliTimeStart() + (now - startedTime);
     }
 
     public byte getClientId()
