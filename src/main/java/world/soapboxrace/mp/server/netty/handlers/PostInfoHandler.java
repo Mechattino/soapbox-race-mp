@@ -34,8 +34,6 @@ public class PostInfoHandler extends BaseHandler
                 }
             }
         }
-
-        super.channelRead(ctx, msg);
     }
 
     private boolean isPlayerInfo(ByteBuf buf)
@@ -85,15 +83,16 @@ public class PostInfoHandler extends BaseHandler
         buffer.put((byte) 0x01);
         buffer.put(clientFrom.getClientId());
         buffer.put(seqArray);
-        buffer.put((byte) 0x00);
-        buffer.put((byte) 0x01);
-        buffer.putShort((short) 0xffff);
 
-        for (int i = 10; i < (clone.length - 1); i++)
+        for (int i = 6; i < (clone.length - 1); i++)
         {
             buffer.put(clone[i]);
         }
-        
+//        
+        buffer.position(4);
+        buffer.put((byte) 0xff);
+        buffer.put((byte) 0xff);
+//        
         return buffer;
     }
 

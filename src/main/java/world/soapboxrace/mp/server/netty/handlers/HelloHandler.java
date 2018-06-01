@@ -54,10 +54,8 @@ public class HelloHandler extends BaseHandler
             if (mpSession.isFull())
             {
                 Map<Integer, MpClient> mpClients = mpSession.getClients();
-                Iterator<Entry<Integer, MpClient>> iterator = mpClients.entrySet().iterator();
-                while (iterator.hasNext())
+                for (Entry<Integer, MpClient> next : mpClients.entrySet())
                 {
-                    Entry<Integer, MpClient> next = iterator.next();
                     MpClient value = next.getValue();
                     value.send(answer(value).array());
                 }
