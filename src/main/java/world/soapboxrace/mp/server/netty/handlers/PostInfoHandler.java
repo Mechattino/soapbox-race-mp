@@ -11,13 +11,11 @@ import world.soapboxrace.mp.race.MpSessions;
 import world.soapboxrace.mp.util.ArrayReader;
 
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Map;
 
 public class PostInfoHandler extends BaseHandler
 {
-    // Ugh...
-    private static Map<Integer, List<Integer>> postInfoMap = new HashMap<>();
-
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception
     {
@@ -36,8 +34,6 @@ public class PostInfoHandler extends BaseHandler
                 }
             }
         }
-        
-        super.channelRead(ctx, msg);
     }
 
     private boolean isPlayerInfo(ByteBuf buf)
@@ -55,19 +51,10 @@ public class PostInfoHandler extends BaseHandler
             while (iterator.hasNext())
             {
                 Map.Entry<Integer, MpClient> next = iterator.next();
-                MpClient value = next.getValue();
                 if (!next.getKey().equals(mpClient.getPort()))
                 {
+                    MpClient value = next.getValue();
                     value.send(transformByteTypeB(value, packet, mpClient).array());
-
-                    postInfoMap.computeIfAbsent(value.getPort(), ArrayList::new);
-                    postInfoMap.get(value.getPort()).add(mpClient.getPort());
-
-                    if (postInfoMap.get(value.getPort()).size() == mpSession.getMaxUsers() - 1)
-                    {
-                        value.incrementSequenceB();
-                        postInfoMap.get(value.getPort()).clear();
-                    }
                 }
             }
         }
@@ -97,14 +84,15 @@ public class PostInfoHandler extends BaseHandler
         buffer.put(clientFrom.getClientId());
         buffer.put(seqArray);
 
-        buffer.putShort((short) 0xffff); // unknown counter
-        buffer.putShort((short) 0xffff); // unknown
-
-        for (int i = 10; i < (clone.length - 1); i++)
+        for (int i = 6; i < (clone.length - 1); i++)
         {
             buffer.put(clone[i]);
         }
-
+//        
+        buffer.position(4);
+        buffer.put((byte) 0xff);
+        buffer.put((byte) 0xff);
+//        
         return buffer;
     }
 
