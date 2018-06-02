@@ -11,11 +11,13 @@ import world.soapboxrace.mp.race.MpSessions;
 import world.soapboxrace.mp.util.ArrayReader;
 
 import java.nio.ByteBuffer;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class PostInfoHandler extends BaseHandler
 {
+    // Ugh...
+    private static Map<Integer, List<Integer>> postInfoMap = new HashMap<>();
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception
     {
@@ -34,7 +36,7 @@ public class PostInfoHandler extends BaseHandler
                 }
             }
         }
-
+        
         super.channelRead(ctx, msg);
     }
 
@@ -53,10 +55,19 @@ public class PostInfoHandler extends BaseHandler
             while (iterator.hasNext())
             {
                 Map.Entry<Integer, MpClient> next = iterator.next();
+                MpClient value = next.getValue();
                 if (!next.getKey().equals(mpClient.getPort()))
                 {
-                    MpClient value = next.getValue();
                     value.send(transformByteTypeB(value, packet, mpClient).array());
+
+                    postInfoMap.computeIfAbsent(value.getPort(), ArrayList::new);
+                    postInfoMap.get(value.getPort()).add(mpClient.getPort());
+
+                    if (postInfoMap.get(value.getPort()).size() == mpSession.getMaxUsers() - 1)
+                    {
+                        value.incrementSequenceB();
+                        postInfoMap.get(value.getPort()).clear();
+                    }
                 }
             }
         }
@@ -85,9 +96,9 @@ public class PostInfoHandler extends BaseHandler
         buffer.put((byte) 0x01);
         buffer.put(clientFrom.getClientId());
         buffer.put(seqArray);
-        buffer.put((byte) 0x00);
-        buffer.put((byte) 0x01);
-        buffer.putShort((short) 0xffff);
+
+        buffer.putShort((short) 0xffff); // unknown counter
+        buffer.putShort((short) 0xffff); // unknown
 
         for (int i = 10; i < (clone.length - 1); i++)
         {
