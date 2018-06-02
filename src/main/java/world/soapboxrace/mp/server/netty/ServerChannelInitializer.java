@@ -18,5 +18,6 @@ public class ServerChannelInitializer extends ChannelInitializer<DatagramChannel
         pipeline.addLast("syncKeepAlive", new KeepAliveHandler());
         pipeline.addLast("sync", new SyncHandler());
         pipeline.addLast("postInfo", new PostInfoHandler());
+        pipeline.addLast("finalHandler", new FinalHandler());
     }
 }

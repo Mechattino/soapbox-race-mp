@@ -93,7 +93,7 @@ public class PostInfoHandler extends BaseHandler
         {
             buffer.put(clone[i]);
         }
-        
+
         return buffer;
     }
 

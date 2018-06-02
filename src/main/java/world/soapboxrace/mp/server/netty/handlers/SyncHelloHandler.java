@@ -89,7 +89,7 @@ public class SyncHelloHandler extends BaseHandler
         buffer.putInt(client.getSessionId());
         buffer.put(createSyncSlots(client.getTotalPlayers()));
         buffer.put((byte) 0xff); // packet end
-        
+
         buffer.put((byte) 0x01);
         buffer.put((byte) 0x02);
         buffer.put((byte) 0x03);
